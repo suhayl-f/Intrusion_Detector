@@ -1,0 +1,6 @@
+Nov 23 09:10:01 server sshd[1021]: Failed password for root from 192.168.1.50 port 22 ssh2
+Nov 23 09:10:05 server sshd[1022]: Failed password for root from 192.168.1.50 port 22 ssh2
+Nov 23 09:10:09 server sshd[1023]: Failed password for admin from 192.168.1.50 port 22 ssh2
+Nov 23 09:10:12 server sshd[1024]: Failed password for ubuntu from 192.168.1.50 port 22 ssh2
+Nov 23 09:10:15 server sshd[1025]: Failed password for root from 192.168.1.50 port 22 ssh2
+Nov 23 09:12:00 server sshd[1030]: Accepted password for devuser from 10.0.0.12 port 54321 ssh2
