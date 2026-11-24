@@ -20,7 +20,7 @@ public class ThreatDetector {
 
             timeStamps.removeIf(time -> Duration.between(time, entry.timeStamp()).getSeconds() > WINDOW_SECONDS);
 
-            if (timeStamps.size() >= THRESHOLD) {
+            if (timeStamps.size() == THRESHOLD) {
                 triggerAlert("HIGH", "Brute-force SSH attempt detected", entry);
             }
 
