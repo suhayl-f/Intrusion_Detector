@@ -24,7 +24,15 @@ public class ThreatDetector {
                 triggerAlert("HIGH", "Brute-force SSH attempt detected", entry);
             }
 
+            if ("root".equals(entry.user())){
+                triggerAlert("MEDIUM", "Root SSH attempt detected", entry);
+            }
+
         } else if ("Accepted".equals(entry.status())) {
+            if ("root".equals(entry.user())){
+                    triggerAlert("CRITICAL", "Successful Root login", entry);
+                }
+
             if (failedAttempts.containsKey(entry.sourceIP())) {
                 List<LocalDateTime> timeStamps = failedAttempts.get(entry.sourceIP());
                 // Prune expired failures so normal typos from minutes ago don't trigger false alarms
