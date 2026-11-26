@@ -4,7 +4,8 @@ import java.io.RandomAccessFile;
 
 public class Main {
     public static void main(String[] args) {
-        File logFile = new File("auth.log");
+        String logPath = args.length > 0 ? args[0] : "auth.log";
+        File logFile = new File(logPath);
         ThreatDetector detector = new ThreatDetector();
 
         System.out.println("Starting Real-Time Log Intrusion Detection on: " + logFile.getName());
