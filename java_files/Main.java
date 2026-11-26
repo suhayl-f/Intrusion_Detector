@@ -4,11 +4,22 @@ import java.io.RandomAccessFile;
 
 public class Main {
     public static void main(String[] args) {
-        String logPath = args.length > 0 ? args[0] : "auth.log";
+        // Accept CLI arguments: java [LogFilePath] [outputJsonPath]
+        String logPath = args.length > 0 ? args[0] : "logs/auth.log";
+        String outputJsonPath = args.length > 1 ? args[1] : "logs/alerts.json";
+
         File logFile = new File(logPath);
-        ThreatDetector detector = new ThreatDetector();
+        if (!logFile.exists()) {
+            System.err.println("Error: Log file not found at: " + logFile.getAbsolutePath());
+            System.err.println("Usage: java Main [path/to/auth.log] [path/to/alerts.json");
+            System.exit(1);
+        }
+
+        ThreatDetector detector = new ThreatDetector(outputJsonPath);
 
         System.out.println("Starting Real-Time Log Intrusion Detection on: " + logFile.getName());
+        System.out.println("Monitoring File: " + logFile.getAbsolutePath());
+        System.out.println("Exporting Alerts: " + outputJsonPath);
         System.out.println("Press Ctrl+C to stop monitoring...\n");
 
         long filePointer = 0;

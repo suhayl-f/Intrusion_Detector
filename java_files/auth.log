@@ -1,2 +1,0 @@
-Nov 24 08:15:00 prod-web-01 sshd: Accepted password for deploy from 10.0.1.14 port 51234 ssh2
-Nov 24 09:30:12 prod-web-01 sshd: Accepted password for devuser from 10.0.0.12 port 54321 ssh2

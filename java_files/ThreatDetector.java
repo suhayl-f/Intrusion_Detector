@@ -13,11 +13,16 @@ public class ThreatDetector {
 
     private final Map<String, List<LocalDateTime>> failedAttempts = new HashMap<>();
     private final List<SecurityAlert> incidentHistory = new ArrayList<>();
+    private final String outputJsonPath;
 
     private static final int THRESHOLD = 5;
     private static final int WINDOW_SECONDS = 60;
-    private static final int BUSINESS_START_HOUR = 6;  // 06:00
-    private static final int BUSINESS_END_HOUR = 22;   // 22:00
+    private static final int BUSINESS_START_HOUR = 6; // 06:00
+    private static final int BUSINESS_END_HOUR = 22; // 22:00
+
+    public ThreatDetector(String outputJsonPath) {
+        this.outputJsonPath = outputJsonPath;
+    }
 
     public void analyze(LogEntry entry) {
         if ("Failed".equals(entry.status())) {
@@ -27,7 +32,8 @@ public class ThreatDetector {
 
             timeStamps.removeIf(time -> Duration.between(time, entry.timeStamp()).getSeconds() > WINDOW_SECONDS);
 
-            // Use == THRESHOLD to prevent spamming duplicate alerts during a continuous attack
+            // Use == THRESHOLD to prevent spamming duplicate alerts during a continuous
+            // attack
             if (timeStamps.size() == THRESHOLD) {
                 triggerAlert("HIGH", "Brute-force SSH attempt detected", entry);
             }
@@ -69,11 +75,14 @@ public class ThreatDetector {
             default -> RESET;
         };
 
-        System.out.printf("%s[%s]%s %s | IP: %s | Target User: %s | Time: %s%n",
-                color, severity, RESET, message, entry.sourceIP(), entry.user(), entry.timeStamp());
+        String ipContext = IpEnricher.getIpContext(entry.sourceIP());
 
-        incidentHistory.add(new SecurityAlert(severity, message, entry.sourceIP(), entry.user(), entry.timeStamp()));
-        exportAlertsToJson("alerts.json");
+        System.out.printf("%s[%s]%s %s | IP: %s [%s] | Target User: %s | Time: %s%n",
+                color, severity, RESET, message, entry.sourceIP(), ipContext, entry.user(), entry.timeStamp());
+
+        incidentHistory.add(
+                new SecurityAlert(severity, message, entry.sourceIP(), ipContext, entry.user(), entry.timeStamp()));
+        exportAlertsToJson(outputJsonPath);
     }
 
     public void exportAlertsToJson(String fileName) {
@@ -81,7 +90,11 @@ public class ThreatDetector {
                 .map(SecurityAlert::toJson)
                 .collect(Collectors.joining(",\n", "[\n", "\n]"));
         try {
-            Files.writeString(Path.of(fileName), jsonBody);
+            Path outputPath = Path.of(fileName);
+            if (outputPath.getParent() != null) {
+                Files.createDirectories(outputPath.getParent());
+            }
+            Files.writeString(outputPath, jsonBody);
         } catch (IOException e) {
             System.err.println("Failed to write JSON report: " + e.getMessage());
         }

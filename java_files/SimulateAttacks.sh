@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOG_FILE="auth.log"
+LOG_FILE="logs/auth.log"
 
 echo "=== Starting Live Attack & Traffic Simulation ==="
 echo "Make sure 'java Main' is running in another terminal tab!"
